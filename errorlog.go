@@ -31,16 +31,22 @@ func (s *Server) newErrorLogger() *log.Logger {
 	return l
 }
 
+func (s *Server) Error(b []byte) (int, error) {
+
+	if s.Log != nil {
+		s.Log.Verbose("%s", b)
+	}
+
+	if s.errch != nil {
+		s.errch <- string(b)
+	}
+
+	return len(b), nil
+}
+
 func (e engWrite) Write(b []byte) (int, error) {
 
-	if e.s.Log != nil {
-		e.s.Log.Verbose("%s", b)
-	}
-
-	if e.s.errch != nil {
-		e.s.errch <- string(b)
-	}
-	return len(b), nil
+	return e.s.Error(b)
 }
 
 func (s *Server) errlogger() {
