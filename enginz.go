@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"runtime/debug"
 	"sync"
 	"time"
 )
@@ -175,7 +176,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	defer func() {
 		// because bugs
 		if r := recover(); r != nil {
-			s.Report.Problem("PANIC! %s -> %s", req.RemoteAddr, req.RequestURI)
+			s.Report.Problem("PANIC! %s -> %s\n%s\n", req.RemoteAddr, req.RequestURI, string(debug.Stack()))
 			s.serverError(w, req)
 		}
 	}()
