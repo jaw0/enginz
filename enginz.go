@@ -157,8 +157,12 @@ func (s *Server) Shutdown(ctx context.Context) {
 
 	var wg sync.WaitGroup
 
-	close(s.logch)
-	close(s.errch)
+	if s.logch != nil {
+		close(s.logch)
+	}
+	if s.errch != nil {
+		close(s.errch)
+	}
 
 	for _, ss := range s.Service {
 		wg.Add(1)
